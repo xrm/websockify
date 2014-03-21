@@ -43,6 +43,9 @@
             <div id="cmd" style="background: 0; outline: 0; width: 100%">
                 <div id="prompt" style="float: left;">&gt;&nbsp;</div><div style="margin-left: 1.2em;"><input type="text" name="i" id="cmdline" style="width: 100%; margin-top: 1px; background: 0; border: 0; outline: 0" /></div>
             </div>
+            <div style="display: block; position: fixed; top: 3px; right: 3px; color: #C0C0C0;">
+                <input type="checkbox" id="noClrCmd" name="noClrCmd" value="1" /><label for="noClrCmd">Don't clear input on send.</label>
+            </div>
         </div>
 
         <script>
@@ -82,6 +85,7 @@
                 $D('port').value = (url.match(/port=([^&#]*)/) || ['',''])[1];
                 
                 telnet = Telnet('terminal', connected, disconnected, 'cmdline', 'prompt');
+                Util.addEvent(document.getElementById("noClrCmd"), 'change', telnet.toggleClr);
             }
 
             window.onresize = function(event) {

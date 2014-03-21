@@ -22,7 +22,7 @@
  *
  * This version has been slightly adjusted by XRM from github.com / YEN from nightfall.org (17jun13).
  * (Made echo on-off-switchable, changed to ansi and using keypress instead of the key-map, added setPageSize)
- * (Also adjusted code to use TANSI.js instead of VT100.js)
+ * (Also adjusted code to use TANSI.js instead of VT100.js and added a noClear-option)
  */
 
 function Telnet(target, connect_callback, disconnect_callback, input, prompt) {
@@ -31,6 +31,7 @@ var that = {},  // Public API interface
     tansi, ws, sQ = [],
     termType = "ANSI",
     _naws = 0;
+    _noClear = 0;
 
 
 Array.prototype.pushStr = function (str) {
@@ -38,6 +39,16 @@ Array.prototype.pushStr = function (str) {
     for (var i=0; i < n; i++) {
         this.push(str.charCodeAt(i));
     }
+}
+
+function setNoClear (noClr) {
+  if (noClr === 1) {
+    _noClear = 1;
+  }
+  else {
+    _noClear = 0;
+  }
+  return _noClear;
 }
 
 function setPageSize(noSend) {
@@ -219,7 +230,20 @@ that.disconnect = function() {
 }
 
 that.setPageSize = function() {
-    setPageSize();
+    return setPageSize();
+}
+
+that.setNoClear = function(noClr) {
+    return setNoClear(noClr);
+}
+
+that.toggleClr = function() {
+    if (!document.getElementById("noClrCmd").checked) {
+        setNoClear(0);
+    }
+    else {
+        setNoClear(1);
+    }
 }
 
 function constructor() {
@@ -299,7 +323,7 @@ function constructor() {
         }
 
         if (str && str != '\x1b')
-            tansi.controlBuffer(str);
+            tansi.controlBuffer(str, _noClear);
         if (str != '\b')
         {
             Util.stopEvent(e);

@@ -248,7 +248,7 @@ TANSI.prototype.write = function(str)
   this.addText(t);
 }
 
-TANSI.prototype.controlBuffer = function (str)
+TANSI.prototype.controlBuffer = function (str, noClear)
 {
   if (!this._greedy)
     return;
@@ -264,7 +264,9 @@ TANSI.prototype.controlBuffer = function (str)
     if (this._isr !== undefined)
       this._isr(this._buffer+"\n");
     this._historyPos = -1;
-    this.clearBuf();
+    if (noClear !== 1 || this._input.type === "password") {
+      this.clearBuf();
+    }
   }
   else if (str.charCodeAt(0) == 8)
   {
@@ -330,6 +332,8 @@ TANSI.prototype.showBuffer = function (noUpdate)
 
 TANSI.prototype.noecho = function ()
 {
+  this.clearBuf();
+  this.showBuffer();
   this._echo = 0;
   this._input.type = "password";
 }
