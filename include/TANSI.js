@@ -273,7 +273,7 @@ TANSI.prototype.controlBuffer = function (str, noClear)
       }
       catch(ignore) {}
       try {
-        this._input.setSelectionRange(0, this.value.length);
+        this._input.setSelectionRange(0, this._input.value.length);
       }
       catch(ignore) {}
     }
