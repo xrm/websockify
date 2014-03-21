@@ -267,6 +267,16 @@ TANSI.prototype.controlBuffer = function (str, noClear)
     if (noClear !== 1 || this._input.type === "password") {
       this.clearBuf();
     }
+    else if (noClear === 1) {
+      try {
+        this._input.select();
+      }
+      catch(ignore) {}
+      try {
+        this._input.setSelectionRange(0, this.value.length);
+      }
+      catch(ignore) {}
+    }
   }
   else if (str.charCodeAt(0) == 8)
   {
