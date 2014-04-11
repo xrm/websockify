@@ -1,7 +1,7 @@
 // TANSI.js -- a telnet-ansi-replacement for VT100 which drops some of the
 // extravagant features (set cursor to certain locations, f.e.), but which
 // provides scrollback, command history and a separate command line.
-// 
+//
 // Written by XRM from github.com / YEN from nightfall.org 19jun13
 // Bases on VT100.js by Frank Bi <bi@zompower.tk>
 
@@ -128,12 +128,22 @@ TANSI.prototype.addText = function (str, fromBuffer)
   {
     if (str.charCodeAt(i) != 27)
     {
-      if (str.charCodeAt(i) < 32 && str.charCodeAt(i) != 10)
+      if (str.charCodeAt(i) < 32 && str.charCodeAt(i) != 10 && str.charCodeAt(i) != 7)
       {
         i++;
         continue;
       }
-      if (str.charCodeAt(i) == 10)
+      else if (str.charCodeAt(i) == 7) {
+        if (document.getElementById('beep').checked) {
+          var bell = document.getElementById('bellSound');
+          if (!bell.paused) {
+            bell.pause();
+            bell.currentTime = 0;
+          }
+          bell.play();
+        }
+      }
+      else if (str.charCodeAt(i) == 10)
       {
         firstLine = 0;
         length = 0;
@@ -235,7 +245,7 @@ TANSI.prototype.write = function(str)
   var t = "";
   for (i = 0; i < str.length; i++)
   {
-    if (str.charCodeAt(i) >= 32 || str.charCodeAt(i) == 27 || str.charCodeAt(i) == 10)
+    if (str.charCodeAt(i) >= 32 || str.charCodeAt(i) == 27 || str.charCodeAt(i) == 10 || str.charCodeAt(i) == 7)
     {
       t += str[i];
     }
