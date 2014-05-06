@@ -128,7 +128,7 @@ TANSI.prototype.addText = function (str, fromBuffer)
   {
     if (str.charCodeAt(i) != 27)
     {
-      if (str.charCodeAt(i) < 32 && str.charCodeAt(i) != 10 && str.charCodeAt(i) != 7)
+      if (str.charCodeAt(i) < 32 && str.charCodeAt(i) != 10 && str.charCodeAt(i) != 9 && str.charCodeAt(i) != 7)
       {
         i++;
         continue;
@@ -245,7 +245,7 @@ TANSI.prototype.write = function(str)
   var t = "";
   for (i = 0; i < str.length; i++)
   {
-    if (str.charCodeAt(i) >= 32 || str.charCodeAt(i) == 27 || str.charCodeAt(i) == 10 || str.charCodeAt(i) == 7)
+    if (str.charCodeAt(i) >= 32 || str.charCodeAt(i) == 27 || str.charCodeAt(i) == 10 || str.charCodeAt(i) == 9 || str.charCodeAt(i) == 7)
     {
       t += str[i];
     }
