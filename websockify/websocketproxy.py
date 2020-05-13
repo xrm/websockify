@@ -31,6 +31,8 @@ except ImportError:
     from cgi import parse_qs
     from urlparse import urlparse
 
+send_client_ip = False
+
 class ProxyRequestHandler(websockifyserver.WebSockifyRequestHandler):
 
     buffer_size = 65536
@@ -191,7 +193,7 @@ Traffic Legend:
 
         # send the client IP to the target mud.
         if send_client_ip:
-            clientip, clientport = self.request.getpeername()
+            clientip, clientport, tmp1, tmp2 = self.request.getpeername()
             self.log_message('Sending REMOTE_HOST=%s\n' % clientip)
             tqueue.append('REMOTE_HOST=%s\n' % clientip)
 
