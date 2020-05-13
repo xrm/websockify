@@ -183,13 +183,14 @@ Traffic Legend:
         """
         Proxy client WebSocket to normal target socket.
         """
+        global send_client_ip
         cqueue = []
         c_pend = 0
         tqueue = []
         rlist = [self.request, target]
 
         # send the client IP to the target mud.
-        if self.send_client_ip:
+        if send_client_ip:
             clientip, clientport = self.request.getpeername()
             self.log_message('Sending REMOTE_HOST=%s\n' % clientip)
             tqueue.append('REMOTE_HOST=%s\n' % clientip)
@@ -291,7 +292,6 @@ class WebSocketProxy(websockifyserver.WebSockifyServer):
         self.token_plugin = kwargs.pop('token_plugin', None)
         self.host_token = kwargs.pop('host_token', None)
         self.auth_plugin = kwargs.pop('auth_plugin', None)
-	self.send_client_ip = kwargs.pop('send_client_ip', None)
 
         # Last 3 timestamps command was run
         self.wrap_times    = [0, 0, 0]
@@ -449,6 +449,7 @@ def select_ssl_version(version):
         return SSL_OPTIONS[fallback]
 
 def websockify_init():
+    global send_client_ip
     # Setup basic logging to stderr.
     logger = logging.getLogger(WebSocketProxy.log_prefix)
     logger.propagate = False
@@ -632,7 +633,6 @@ def websockify_init():
     if opts.verbose:
         logger.setLevel(logging.DEBUG)
 
-
     # Transform to absolute path as daemon may chdir
     if opts.target_cfg:
         opts.target_cfg = os.path.abspath(opts.target_cfg)
@@ -721,6 +721,10 @@ def websockify_init():
         opts.auth_plugin = auth_plugin_cls(opts.auth_source)
 
     del opts.auth_source
+
+    if opts.send_client_ip is not None:
+        send_client_ip = True
+    del opts.send_client_ip
 
     # Create and start the WebSockets proxy
     libserver = opts.libserver
