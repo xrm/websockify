@@ -58,11 +58,13 @@
       <input type="checkbox" id="beep" name="beep" value="1" /><label for="beep">Activate sounds</label><br />
       <input type="checkbox" id="noClrCmd" name="noClrCmd" value="1" /><label for="noClrCmd">Don't clear input on send</label><br />
       <input type="checkbox" id="breakLines" name="breakLines" value="1" checked /><label for="breakLines">Break long lines</label><br />
+      <input type="checkbox" id="keepAlive" name="keepAlive" value="1" /><label for="keepAlive" title="Send a line break every 295 minutes to prevent the mud from disconnecting.">Keep alive</label><br />
     </div>
   </div>
 
   <script>
     var telnet;
+    var timeout = 0;
 
     function connect() {
       telnet.connect($D('host').value,
@@ -92,13 +94,22 @@
     }
 
     window.onload = function() {
-      console.log("onload");
       var url = document.location.href;
       $D('host').value = (url.match(/host=([^&#]*)/) || ['',''])[1];
       $D('port').value = (url.match(/port=([^&#]*)/) || ['',''])[1];
       telnet = Telnet('terminal', connected, disconnected, 'cmdline', 'prompt');
       Util.addEvent(document.getElementById("noClrCmd"), 'change', telnet.toggleClr);
       Util.addEvent(document.getElementById("breakLines"), 'change', () => document.getElementById("terminal").classList.toggle("breakLines"));
+      Util.addEvent(document.getElementById("keepAlive"), 'change', (t) => {
+        if (!t.target.checked) {
+          telnet.timeoutCallback = (() => {});
+        }
+        else {
+          telnet.timeoutCallback = (e => e.send("\n"));
+          telnet.setTimeout(60 * 60 * 295); // 295 minutes
+          telnet.send("\n");
+        }
+      });
     }
 
     window.onresize = function(event) {

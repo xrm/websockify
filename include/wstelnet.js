@@ -66,6 +66,10 @@ that.setTimeout = function(timeout) {
   }
 }
 
+that.getTimeout = function() {
+  return _timeout;
+}
+
 function setPageSize(noSend) {
     if (!_naws)
         return;
