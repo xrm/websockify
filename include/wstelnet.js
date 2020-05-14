@@ -27,12 +27,13 @@
 
 function Telnet(target, connect_callback, disconnect_callback, input, prompt) {
 
-var that = {},  // Public API interface
+var that = { timeoutCallback: () => {} },  // Public API interface
     tansi, ws, sQ = [],
     termType = "ANSI",
-    _naws = 0;
-    _noClear = 0;
-
+    _naws = 0,
+    _noClear = 0,
+    _timeoutTimer = null,
+    _timeout = 60 * 60 * 2;  // timeout of two hours per default
 
 Array.prototype.pushStr = function (str) {
     var n = str.length;
@@ -49,6 +50,20 @@ function setNoClear (noClr) {
     _noClear = 0;
   }
   return _noClear;
+}
+
+function resetTimeoutTimer() {
+  if (_timeoutTimer !== null) {
+    clearTimeout(_timeoutTimer);
+  }
+  _timeoutTimer = setTimeout(() => { that.timeoutCallback(that); } , _timeout * 1000);
+}
+
+that.setTimeout = function(timeout) {
+  if (typeof timeout === "number") {
+    _timeout = timeout;
+    // Timeout will only activate on next send!
+  }
 }
 
 function setPageSize(noSend) {
@@ -69,7 +84,7 @@ function setPageSize(noSend) {
     if (h0 == 255) sQ.push(h0);
     sQ.push(h1);
     if (h1 == 255) sQ.push(h1);
-    sQ.push(255, 240); 
+    sQ.push(255, 240);
     if (noSend === undefined || noSend != 1)
         do_send();
 }
@@ -79,7 +94,17 @@ function do_send() {
         Util.Debug("Sending " + sQ);
         ws.send(sQ);
         sQ = [];
+        resetTimeoutTimer();
     }
+}
+
+that.send = function(str) {
+    ws.send_string(str);
+    resetTimeoutTimer();
+}
+
+that.getWS = function() {
+    return ws;
 }
 
 function do_recv() {
