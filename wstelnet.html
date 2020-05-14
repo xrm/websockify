@@ -10,20 +10,28 @@
   <script src="include/keysym2.js"></script>
   <script src="include/TANSI.js"></script>
   <script src="include/wstelnet.js"></script>
-  <!-- Uncomment to activate firebug lite -->
-  <!--
-  <script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
-  -->
   <style type="text/css">
     <!--
       body {
         font-family: Monaco,Consolas,Lucida Console,DejaVu Sans Mono,Courier New,Droid Sans Mono,monospace; background-color: #1D1D1D; color: #C0C0C0; height: 100%; width: 100%; min-width: 700px; margin: 0; padding: 0; font-size: 85%;
+      }
+      #terminal {
+        height: auto; width: 100%; margin: 0 auto;
+      }
+      hr {
+        background: 0; outline: 0; width: 100%;
+      }
+      .breakLines {
+        word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; overflow-x: auto;
       }
       * {
         font-family: Monaco,Consolas,Lucida Console,DejaVu Sans Mono,Courier New,Droid Sans Mono,monospace; font-size: 100%;
       }
       input {
         background: 0; border: 0; color: #C0C0C0; outline: 0;
+      }
+      #optionsBlock {
+        display: block; position: fixed; top: 3px; right: 3px; color: #C0C0C0; background-color: rgba(29,29,29,0.4);
       }
     -->
   </style>
@@ -41,14 +49,15 @@
     <input id='connectButton' type='button' value='Connect' style='width:100px' onclick="connect();">&nbsp;
 
     <br><br>
-    <pre id="terminal" style="height: auto; width: 100%; margin: 0 auto;"></pre>
+    <pre id="terminal" class="breakLines"></pre>
     <hr style="border: 0; border-bottom: 1px dashed #C0C0C0;"/>
-    <div id="cmd" style="background: 0; outline: 0; width: 100%">
-      <div id="prompt" style="float: left;">&gt;&nbsp;</div><div style="margin-left: 1.2em;"><input type="text" name="i" id="cmdline" style="width: 100%; margin-top: 1px; background: 0; border: 0; outline: 0" /></div>
+    <div id="cmd">
+      <div id="prompt" style="float: left;">&gt;</div><div style="margin-left: 1.5em;"><input type="text" name="i" id="cmdline" style="width: 100%;margin-top:1px;" /></div>
     </div>
-    <div style="display: block; position: fixed; top: 3px; right: 3px; color: #C0C0C0;">
+    <div id="optionsBlock">
       <input type="checkbox" id="beep" name="beep" value="1" /><label for="beep">Activate sounds</label><br />
       <input type="checkbox" id="noClrCmd" name="noClrCmd" value="1" /><label for="noClrCmd">Don't clear input on send</label><br />
+      <input type="checkbox" id="breakLines" name="breakLines" value="1" checked /><label for="breakLines">Break long lines</label><br />
     </div>
   </div>
 
@@ -89,6 +98,7 @@
       $D('port').value = (url.match(/port=([^&#]*)/) || ['',''])[1];
       telnet = Telnet('terminal', connected, disconnected, 'cmdline', 'prompt');
       Util.addEvent(document.getElementById("noClrCmd"), 'change', telnet.toggleClr);
+      Util.addEvent(document.getElementById("breakLines"), 'change', () => document.getElementById("terminal").classList.toggle("breakLines"));
     }
 
     window.onresize = function(event) {

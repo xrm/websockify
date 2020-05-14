@@ -55,7 +55,7 @@ TANSI.prototype.setPageSize = function ()
     l = s.innerText.length;
   else
     l = s.textContent.length;
-  this._width = Math.floor(this._target.clientWidth / (s.offsetWidth / l)) - 1;
+  this._width = Math.floor(this._target.clientWidth / ((s.getBoundingClientRect().width)/ l)) - 1;
   this._height = Math.floor((window.innerHeight || document.documentElement.clientHeight) / s.offsetHeight - 4);
   // If width or length drops below a certain min, reset to default.
   if (this._width < 40)
