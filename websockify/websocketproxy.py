@@ -193,9 +193,8 @@ Traffic Legend:
 
         # send the client IP to the target mud.
         if send_client_ip:
-            clientip, clientport, tmp1, tmp2 = self.request.getpeername()
-            self.log_message('Sending REMOTE_HOST=%s\n' % clientip)
-            tqueue.append('REMOTE_HOST=%s\n' % clientip)
+            clientip = self.request.getpeername()[0]
+            tqueue.append(b'REMOTE_HOST=%s\n' % clientip.encode('UTF-8'))
 
         if self.server.heartbeat:
             now = time.time()
