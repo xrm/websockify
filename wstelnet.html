@@ -65,6 +65,13 @@
   <script>
     var telnet;
     var timeout = 0;
+    var isConnected = false;
+
+    window.onbeforeunload = function (e) {
+      if (isConnected) {
+        e.preventDefault();
+      }
+    };
 
     function connect() {
       telnet.connect($D('host').value,
@@ -81,12 +88,14 @@
     }
 
     function connected() {
+      isConnected = true;
       $D('connectButton').disabled = false;
       $D('connectButton').value = "Disconnect";
       $D('connectButton').onclick = disconnect;
     }
 
     function disconnected() {
+      isConnected = false;
       $D('connectButton').disabled = false;
       $D('connectButton').value = "Connect";
       $D('connectButton').onclick = connect;
