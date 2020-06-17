@@ -184,14 +184,19 @@ TANSI.prototype.addText = function (str, fromBuffer)
         i += j;
         continue;
       }
-      code = str.substr(i + 2, j - 3).split(";");  // Get main part of code
-      let terminator = str.substr(i + j - 1, 1);
-      if (terminator !== "m")
+      if (str.substr(i + 1, 1) !== "[")
       {
         console.log("Unsupported code: " + str.substr(i + 1, j  -1));
         i += j;
         continue;
       }
+      if (str.substr(i + j - 1, 1) !== "m")
+      {
+        console.log("Unsupported code: " + str.substr(i + 1, j  -1));
+        i += j;
+        continue;
+      }
+      code = str.substr(i + 2, j - 3).split(";");  // Get main part of code
       for (k = 0; k < code.length; k++)
       {
         if (code[k].length == 1)
