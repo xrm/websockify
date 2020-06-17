@@ -77,7 +77,8 @@ TANSI.prototype.numToCol = function (num, bold)
     case 1: return bold?"#FF0000":"#B00000";  // RED
     case 2: return bold?"#00FF00":"#00B000";  // GREEN
     case 3: return bold?"#FFD700":"#B0B000";  // YELLOW
-    case 4: return bold?"#0000FF":"#0000B0";  // BLUE
+    case 4: return bold?"#7070ff":"4a4aa5";  // BLUE
+//    case 4: return bold?"#0000FF":"#0000B0";  // BLUE
     case 5: return bold?"#FF00FF":"#B000B0";  // PURPLE
     case 6: return bold?"#00FFFF":"#00B0B0";  // CYAN
     case 7: return bold?"#FFFFFF":"#C0C0C0";  // WHITE
@@ -175,10 +176,22 @@ TANSI.prototype.addText = function (str, fromBuffer)
       j = 2;
       while (str.charCodeAt(i + j) < 64 && (i+j) < str.length)
         j++;
-      j++
+      j++;
       if (i+j >= str.length)
+      {
         this._codeFragment = str.substr(i, j);
+        str = str.substr(0, i);
+        i += j;
+        continue;
+      }
       code = str.substr(i + 2, j - 3).split(";");  // Get main part of code
+      let terminator = str.substr(i + j - 1, 1);
+      if (terminator !== "m")
+      {
+        console.log("Unsupported code: " + str.substr(i + 1, j  -1));
+        i += j;
+        continue;
+      }
       for (k = 0; k < code.length; k++)
       {
         if (code[k].length == 1)
